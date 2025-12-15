@@ -1,11 +1,29 @@
+import { Link } from "react-router";
+import logo from "../../../assets/images/logo-flat.png";
+import { FaFacebook, FaLinkedin } from "react-icons/fa";
+import { BsLinkedin } from "react-icons/bs";
+
 const Footer = () => {
   return (
-    <footer className='px-4 divide-y  text-gray-800 relative bottom-0 left-0'>
-      <div className='py-6 text-sm text-center text-gray-400'>
-        © 2025-2026 PlantNet Inc. All rights reserved.
-      </div>
+    <footer className="footer footer-horizontal footer-center bg-white p-10 text-black">
+      <aside>
+        <img src={logo} alt="" srcset="" />
+        <p>
+          Copyright © {new Date().getFullYear()} ContestHub- All right reserved
+        </p>
+      </aside>
+      <nav>
+        <div className="grid grid-flow-col gap-4">
+          <Link>
+            <FaFacebook  className="text-2xl text-blue-950"/>
+          </Link>
+          <Link>
+            <FaLinkedin className="text-2xl text-blue-950" />
+          </Link>
+        </div>
+      </nav>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;
