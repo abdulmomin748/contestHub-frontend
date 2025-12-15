@@ -1,5 +1,6 @@
 import Plants from '../../components/Home/Plants'
 import Banner from './Banner'
+import WinnerAdvertiseMent from './WinnerAdvertiseMent'
 
 const Home = () => {
   return (
@@ -7,6 +8,7 @@ const Home = () => {
       {/* <Plants /> */}
       {/* More components */}
       <Banner />
+      <WinnerAdvertiseMent />
     </div>
   )
 }
