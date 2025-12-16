@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import useAxios from "../../hooks/useAxios";
 import { ArrowRight, Calendar, Trophy, Users } from "lucide-react";
+import { Link } from "react-router";
 
 const PopularContest = () => {
   const axiosInstance = useAxios();
@@ -28,7 +29,7 @@ const PopularContest = () => {
           prizes. Your success story could be next!
         </p>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-15">
         {contests.map((contestItem) => (
           <div className=" bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 ">
@@ -73,18 +74,25 @@ const PopularContest = () => {
                 <Calendar size={14} />
                 <span>Ends: {contestItem.contestStatus}</span>
               </div>
-
-              {/* Details Button */}
-              <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 flex items-center justify-center gap-2 group">
-                View Details
-                <ArrowRight
-                  size={16}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
-              </button>
+              <div className="">
+                <Link
+                  className="btn btn-primary w-full"
+                  to={`/contest/${contestItem._id}`}
+                >
+                  Show Details
+                </Link>
+              </div>
             </div>
           </div>
         ))}
+      </div>
+      <div className="text-center py-20">
+        <Link
+          to={`/all-contests`}
+          className="bg-white text-blue-600 font-semibold py-3 px-8 rounded-lg border-2 border-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200"
+        >
+          Show All Contests
+        </Link>
       </div>
     </>
   );
