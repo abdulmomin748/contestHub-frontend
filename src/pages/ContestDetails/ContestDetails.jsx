@@ -11,16 +11,21 @@ import {
 } from "lucide-react";
 import useAxios from "../../hooks/useAxios";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import { startDeadlineCountdown } from "../../utilities/startDeadlineCountdown";
 import { useEffect } from "react";
 import { useState } from "react";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
-
+import { useQueryClient } from "@tanstack/react-query";
+import useAuth from "../../hooks/useAuth";
 const ContestCard = () => {
+  const { user } = useAuth();
   const axiosInstance = useAxios();
   const axiosSecure = useAxiosSecure();
   const { id } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+
   const [time, setTime] = useState({
     days: 0,
     hours: 0,
@@ -36,12 +41,13 @@ const ContestCard = () => {
     },
   });
 
-  // new register option with same page
   const handlePaymentRegister = async () => {
     const paymentRegisterInfo = {
       contestId: contestItem._id,
       registrationFee: contestItem.registrationFee,
+      userEmail: contestItem?.userEmail,
       contestName: contestItem.contestName,
+      participantsCount: contestItem.participantsCount,
     };
     const res = await axiosSecure.post(
       "/contest/payment-register",
@@ -51,17 +57,49 @@ const ContestCard = () => {
     window.location.assign(res.data.url);
   };
 
-  useEffect(() => {
-    if (!contestItem?.deadline) return; // wait for deadline to exist
-    // start countdown
-    const stop = startDeadlineCountdown(contestItem.deadline, setTime);
+  const handleRegister = async () => {
+    if (Number(contestItem.registrationFee) === 0) {
+      const res = await axiosSecure.post("/contest/free-register", {
+        contestId: contestItem._id,
+        contestName: contestItem.contestName,
+        userEmail: contestItem?.userEmail,
+      });
+      console.log(res.data);
+    } else {
+      handlePaymentRegister();
+    }
+  };
 
-    return stop; // cleanup interval on unmount or when deadline changes
-  }, [contestItem?.deadline]); // run whenever deadline is available
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (!sessionId) return;
+
+    axiosSecure
+      .patch(`/payment-success?session_id=${sessionId}`)
+      .then((res) => {
+        if (res.data.success) {
+          queryClient.invalidateQueries(["contest", id]);
+        }
+      });
+  }, [sessionId, id]);
+
+  const { data: isRegistered, isCheckingRegistered } = useQuery({
+    queryKey: ["isRegistered", id, user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        `/contest-is-registered?contestId=${id}&email=${user.email}`
+      );
+      return res.data.registered;
+    },
+  });
+  console.log(isRegistered);
 
   if (isLoading) {
     return <p>loading.............</p>;
   }
+
+  const isExpired = time.isOver;
 
   const {
     bannerImage,
@@ -215,7 +253,7 @@ const ContestCard = () => {
             </div>
 
             {/* Winner Section (Only shows after contest ends and winner is declared) */}
-            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-2xl p-6 mb-8">
+            <div className="hidden bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-2xl p-6 mb-8">
               <div className="flex items-center gap-3 mb-4">
                 <Award className="text-yellow-600" size={32} />
                 <h2 className="text-2xl font-bold text-gray-800">
@@ -245,28 +283,31 @@ const ContestCard = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <>
                 <button
-                  onClick={() => handlePaymentRegister()}
-                  className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl font-bold text-lg hover:from-purple-700 hover:to-pink-700 transition shadow-lg hover:shadow-xl transform hover:scale-105"
+                  onClick={handleRegister}
+                  disabled={isExpired || isRegistered}
+                  className={`flex-1 py-4 rounded-xl font-bold text-lg transition
+    ${
+      isExpired || isRegistered
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:scale-105"
+    }`}
                 >
-                  Register / Pay Now
+                  {isExpired
+                    ? "Contest Ended"
+                    : isRegistered
+                    ? "Already Registered"
+                    : Number(contestItem?.registrationFee) === 0
+                    ? "Register Free"
+                    : "Pay & Register"}
                 </button>
+
                 <>
-                  <div className="flex-1 bg-green-100 text-green-700 py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2">
-                    <CheckCircle size={24} />
-                    Registered Successfully
-                  </div>
                   <button className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-cyan-700 transition shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2">
                     <Send size={24} />
                     Submit Task
                   </button>
                 </>
               </>
-              <button
-                disabled
-                className="flex-1 bg-gray-300 text-gray-500 py-4 rounded-xl font-bold text-lg cursor-not-allowed"
-              >
-                Registration Closed
-              </button>
             </div>
 
             {/* Info Box */}
