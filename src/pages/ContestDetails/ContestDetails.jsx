@@ -29,6 +29,7 @@ import SubmitTaskModal from "../../components/Modal/SubmitTaskModal";
 const ContestCard = () => {
   let [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth();
+
   const axiosInstance = useAxios();
   const axiosSecure = useAxiosSecure();
   const { id } = useParams();
@@ -51,16 +52,17 @@ const ContestCard = () => {
   });
   const {
     data: isRegistered,
-    isCheckingRegistered,
+    isLoading: isCheckingRegistered,
     refetch,
   } = useQuery({
-    queryKey: ["isRegistered", id, user?.email],
-    enabled: !!user?.email,
+    queryKey: ["Registered", id, user?.email],
+    enabled: !!id && !!user?.email,
     queryFn: async () => {
       const res = await axiosSecure.get(
         `/contest-is-registered?contestId=${id}&email=${user.email}`
       );
-      return res.data.registered;
+
+      return res.data?.registered ?? false; // ✅ ALWAYS return boolean
     },
   });
   const handlePaymentRegister = async () => {
@@ -70,6 +72,7 @@ const ContestCard = () => {
       userEmail: contestItem?.userEmail,
       contestName: contestItem.contestName,
       participantsCount: contestItem.participantsCount,
+      deadline: contestItem.deadline,
     };
     const res = await axiosSecure.post(
       "/contest/payment-register",
@@ -86,6 +89,7 @@ const ContestCard = () => {
         contestId: contestItem._id,
         contestName: contestItem.contestName,
         userEmail: contestItem?.userEmail,
+        deadline: contestItem.deadline,
       });
       refetch();
       console.log(res.data);
@@ -323,8 +327,7 @@ const ContestCard = () => {
                     <Send size={24} />
                     Submit Task
                   </button>
-                  <SubmitTaskModal  setIsOpen={setIsOpen} isOpen={isOpen}/>
-                  
+                  <SubmitTaskModal setIsOpen={setIsOpen} isOpen={isOpen} />
                 </>
               </>
             </div>

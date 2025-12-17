@@ -2,20 +2,17 @@ import Home from "../pages/Home/Home";
 import ErrorPage from "../pages/ErrorPage";
 import Login from "../pages/Login/Login";
 import SignUp from "../pages/SignUp/SignUp";
-import PlantDetails from "../pages/PlantDetails/PlantDetails";
 import PrivateRoute from "./PrivateRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
-import AddPlant from "../pages/Dashboard/Seller/AddPlant";
-import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
-import Profile from "../pages/Dashboard/Common/Profile";
-import Statistics from "../pages/Dashboard/Common/Statistics";
+
 import MainLayout from "../layouts/MainLayout";
-import MyInventory from "../pages/Dashboard/Seller/MyInventory";
-import ManageOrders from "../pages/Dashboard/Seller/ManageOrders";
-import MyOrders from "../pages/Dashboard/Customer/MyOrders";
+
 import { createBrowserRouter } from "react-router";
 import AllContests from "../pages/AllContests/AllContests";
 import ContestDetails from "../pages/ContestDetails/ContestDetails";
+import MyParticipatedContest from "../pages/Dashboard/User/MyParticipatedContest";
+import MyWinningContest from "../pages/Dashboard/User/MyWinningContest";
+import Profile from "../pages/Dashboard/User/Profile";
 
 export const router = createBrowserRouter([
   {
@@ -47,35 +44,28 @@ export const router = createBrowserRouter([
       </PrivateRoute>
     ),
     children: [
+      // user
       {
         index: true,
         element: (
           <PrivateRoute>
-            <Statistics />
+            <MyParticipatedContest />
           </PrivateRoute>
         ),
       },
       {
-        path: "add-plant",
+        path: "my-participated-cont",
         element: (
           <PrivateRoute>
-            <AddPlant />
+            <MyParticipatedContest />
           </PrivateRoute>
         ),
       },
       {
-        path: "my-inventory",
+        path: "my-Winning-cont",
         element: (
           <PrivateRoute>
-            <MyInventory />
-          </PrivateRoute>
-        ),
-      },
-      {
-        path: "manage-users",
-        element: (
-          <PrivateRoute>
-            <ManageUsers />
+            <MyWinningContest />
           </PrivateRoute>
         ),
       },
@@ -87,18 +77,8 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
-      {
-        path: "my-orders",
-        element: (
-          <PrivateRoute>
-            <MyOrders />
-          </PrivateRoute>
-        ),
-      },
-      {
-        path: "manage-orders",
-        element: <ManageOrders />,
-      },
+
+      // contest Creator
     ],
   },
 ]);

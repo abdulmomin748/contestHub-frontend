@@ -1,8 +1,8 @@
-import CustomerOrderDataRow from "../../../components/Dashboard/TableRows/CustomerOrderDataRow";
+import React from "react";
 
-const MyParticipatedContest = () => {
+const MyWinningContest = () => {
   return (
-    <>
+    <div>
       <div className="container mx-auto px-4 sm:px-8">
         <div className="py-8">
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
@@ -56,15 +56,15 @@ const MyParticipatedContest = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <CustomerOrderDataRow />
+                  
                 </tbody>
               </table>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
-export default MyParticipatedContest;
+export default MyWinningContest;

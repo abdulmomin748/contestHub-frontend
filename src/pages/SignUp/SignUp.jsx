@@ -2,9 +2,9 @@ import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router";
 import { TbUserUp } from "react-icons/tb";
 import axios from "axios";
-import SocialLogin from "../SocialLogin/SocialLogin";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import SocialLogin from "../../components/Shared/SocialLogin/SocialLogin";
 
 const SignUp = () => {
   const { registerUser, updateUserProfile } = useAuth();
