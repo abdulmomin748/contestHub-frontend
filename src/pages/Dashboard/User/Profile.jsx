@@ -1,7 +1,10 @@
 import useAuth from "../../../hooks/useAuth";
 import coverImg from "../../../assets/images/cover.jpg";
+import { useState } from "react";
+import UpdateUserProfile from "../../../components/Modal/UpdateUserProfile";
 
 const Profile = () => {
+  let [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth();
 
   return (
@@ -41,12 +44,13 @@ const Profile = () => {
               </p>
 
               <div>
-                <button className="bg-lime-500  px-10 py-1 rounded-lg text-white cursor-pointer hover:bg-lime-800 block mb-1">
+                <button
+                  onClick={() => setIsOpen(true)}
+                  className="bg-lime-500  px-10 py-1 rounded-lg text-white cursor-pointer hover:bg-lime-800 block mb-1"
+                >
                   Update Profile
                 </button>
-                <button className="bg-lime-500 px-7 py-1 rounded-lg text-white cursor-pointer hover:bg-lime-800">
-                  Change Password
-                </button>
+                <UpdateUserProfile setIsOpen={setIsOpen} isOpen={isOpen} />
               </div>
             </div>
           </div>
