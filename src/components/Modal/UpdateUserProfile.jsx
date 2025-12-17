@@ -9,27 +9,32 @@ const UpdateUserProfile = ({ setIsOpen, isOpen }) => {
   const { user, updateUserProfile } = useAuth();
   console.log(user);
 
-  const handleUserUpdate = (data) => {
-    const proFileImg = data.photoUrl[0];
-    const formData = new FormData();
-    formData.append("image", proFileImg);
+  const handleUserUpdate = async (data) => {
+    try {
+      if (data.photoUrl && data.photoUrl.length > 0) {
+        const profileImg = data.photoUrl[0];
+        const formData = new FormData();
+        formData.append("image", profileImg);
 
-    const image_API_URL = `https://api.imgbb.com/1/upload?key=${
-      import.meta.env.VITE_image_host
-    }`;
+        const image_API_URL = `https://api.imgbb.com/1/upload?key=${
+          import.meta.env.VITE_image_host
+        }`;
 
-    axios.post(image_API_URL, formData).then((res) => {
-      const photoURL = res.data.data.url;
-      console.log(photoURL);
-      if (photoURL) {
-        updateUserProfile(data.name, photoURL)
-          .then(() => {
-            console.log("profile updated");
-            setIsOpen(false);
-          })
-          .catch((err) => console.log(err));
+        const res = await axios.post(image_API_URL, formData);
+        const photoURL = res.data.data.url;
+
+        await updateUserProfile(data.name, photoURL);
       }
-    });
+      // Case 2: user only updates name
+      else {
+        await updateUserProfile(data.name);
+      }
+
+      console.log("profile updated");
+      setIsOpen(false);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

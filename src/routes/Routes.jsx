@@ -13,6 +13,10 @@ import ContestDetails from "../pages/ContestDetails/ContestDetails";
 import MyParticipatedContest from "../pages/Dashboard/User/MyParticipatedContest";
 import MyWinningContest from "../pages/Dashboard/User/MyWinningContest";
 import Profile from "../pages/Dashboard/User/Profile";
+import AddContest from "../pages/Dashboard/ContestCreator/AddContest";
+import MyCreatedContests from "../pages/Dashboard/ContestCreator/MyCreatedContests";
+import SubmitedTasksperContest from "../pages/Dashboard/ContestCreator/SubmitedTasksperContest";
+import UpdateContests from "../pages/Dashboard/ContestCreator/UpdateContests";
 
 export const router = createBrowserRouter([
   {
@@ -79,6 +83,38 @@ export const router = createBrowserRouter([
       },
 
       // contest Creator
+      {
+        path: "add-contest",
+        element: (
+          <PrivateRoute>
+            <AddContest />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "my-crtd-context",
+        element: (
+          <PrivateRoute>
+            <MyCreatedContests />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "submiteted-tasks",
+        element: (
+          <PrivateRoute>
+            <SubmitedTasksperContest />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "update-contests",
+        element: (
+          <PrivateRoute>
+            <UpdateContests />
+          </PrivateRoute>
+        ),
+      },
     ],
   },
 ]);

@@ -4,17 +4,26 @@ import MenuItem from "./MenuItem";
 const ContestCreatorMenu = () => {
   return (
     <>
-      {/* <MenuItem
+      <MenuItem
         icon={BsFillHouseAddFill}
-        label="Add Plant"
-        address="add-plant"
+        label="Add Contest"
+        address="add-contest"
       />
-      <MenuItem icon={MdHomeWork} label="My Inventory" address="my-inventory" />
+      <MenuItem
+        icon={MdHomeWork}
+        label="My Created Contexts"
+        address="my-crtd-context"
+      />
       <MenuItem
         icon={MdOutlineManageHistory}
-        label="Manage Orders"
-        address="manage-orders"
-      /> */}
+        label="Submitted Tasks"
+        address="submiteted-tasks"
+      />
+      <MenuItem
+        icon={MdOutlineManageHistory}
+        label="Update Contests"
+        address="update-contests"
+      />
     </>
   );
 };
