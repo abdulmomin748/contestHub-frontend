@@ -10,6 +10,12 @@ import {
   Send,
 } from "lucide-react";
 import useAxios from "../../hooks/useAxios";
+import {
+  Description,
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/react";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { useParams, useSearchParams } from "react-router";
 import { startDeadlineCountdown } from "../../utilities/startDeadlineCountdown";
@@ -18,7 +24,10 @@ import { useState } from "react";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useQueryClient } from "@tanstack/react-query";
 import useAuth from "../../hooks/useAuth";
+import BecomeSellerModal from "../../components/Modal/BecomeSellerModal";
+import SubmitTaskModal from "../../components/Modal/SubmitTaskModal";
 const ContestCard = () => {
+  let [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth();
   const axiosInstance = useAxios();
   const axiosSecure = useAxiosSecure();
@@ -40,7 +49,20 @@ const ContestCard = () => {
       return res.data;
     },
   });
-
+  const {
+    data: isRegistered,
+    isCheckingRegistered,
+    refetch,
+  } = useQuery({
+    queryKey: ["isRegistered", id, user?.email],
+    enabled: !!user?.email,
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        `/contest-is-registered?contestId=${id}&email=${user.email}`
+      );
+      return res.data.registered;
+    },
+  });
   const handlePaymentRegister = async () => {
     const paymentRegisterInfo = {
       contestId: contestItem._id,
@@ -55,6 +77,7 @@ const ContestCard = () => {
     );
     console.log(res.data.url, paymentRegisterInfo);
     window.location.assign(res.data.url);
+    refetch();
   };
 
   const handleRegister = async () => {
@@ -64,6 +87,7 @@ const ContestCard = () => {
         contestName: contestItem.contestName,
         userEmail: contestItem?.userEmail,
       });
+      refetch();
       console.log(res.data);
     } else {
       handlePaymentRegister();
@@ -83,16 +107,6 @@ const ContestCard = () => {
       });
   }, [sessionId, id]);
 
-  const { data: isRegistered, isCheckingRegistered } = useQuery({
-    queryKey: ["isRegistered", id, user?.email],
-    enabled: !!user?.email,
-    queryFn: async () => {
-      const res = await axiosSecure.get(
-        `/contest-is-registered?contestId=${id}&email=${user.email}`
-      );
-      return res.data.registered;
-    },
-  });
   console.log(isRegistered);
 
   if (isLoading) {
@@ -284,13 +298,13 @@ const ContestCard = () => {
               <>
                 <button
                   onClick={handleRegister}
-                  disabled={isExpired || isRegistered}
+                  disabled={isExpired || isRegistered || isCheckingRegistered}
                   className={`flex-1 py-4 rounded-xl font-bold text-lg transition
-    ${
-      isExpired || isRegistered
-        ? "bg-gray-400 cursor-not-allowed"
-        : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:scale-105"
-    }`}
+                ${
+                  isExpired || isRegistered
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:scale-105"
+                }`}
                 >
                   {isExpired
                     ? "Contest Ended"
@@ -302,22 +316,29 @@ const ContestCard = () => {
                 </button>
 
                 <>
-                  <button className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-cyan-700 transition shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => setIsOpen(true)}
+                    className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-cyan-700 transition shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
+                  >
                     <Send size={24} />
                     Submit Task
                   </button>
+                  <SubmitTaskModal  setIsOpen={setIsOpen} isOpen={isOpen}/>
+                  
                 </>
               </>
             </div>
 
             {/* Info Box */}
 
-            <div className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
-              <p className="text-blue-800 text-center">
-                ✅ You're registered! Click "Submit Task" to provide your
-                submission link and complete your entry.
-              </p>
-            </div>
+            {isRegistered && (
+              <div className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
+                <p className="text-blue-800 text-center">
+                  ✅ You're registered! Click "Submit Task" to provide your
+                  submission link and complete your entry.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
