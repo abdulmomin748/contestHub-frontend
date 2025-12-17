@@ -112,7 +112,17 @@ const ContestCard = () => {
   }, [sessionId, id]);
 
   console.log(isRegistered);
-
+  const { data: isSubmission, isLoading: isCheckingSubmission } = useQuery({
+    queryKey: ["Submission", id],
+    enabled: !!id && !!user?.email,
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        `/contest-submission?contestId=${contestItem._id}&email=${user.email}`
+      );
+      console.log("122", res.data);
+      return res.data;
+    },
+  });
   if (isLoading) {
     return <p>loading.............</p>;
   }
@@ -134,6 +144,30 @@ const ContestCard = () => {
     _id,
     registrationFee,
   } = contestItem;
+  console.log(contestItem);
+
+  const handleSubmission = (data) => {
+    const submissionInfo = {
+      contestId: contestItem._id,
+      participantName: user?.displayName,
+      participantEmail: contestItem?.userEmail,
+      contestName: contestItem.contestName,
+      participantsCount: contestItem.participantsCount,
+      deadline: contestItem.deadline,
+      category: contestItem.category,
+      taskName: data.taskName,
+    };
+    console.log(submissionInfo, data);
+    axiosSecure
+      .post("/contest/submission", submissionInfo)
+      .then((res) => {
+        console.log(res.data);
+        refetch();
+      })
+      .catch((err) => console.log(err.response.data));
+  };
+  const hasSubmitted = Boolean(isSubmission?.submissionTaskAlreadyExist);
+  console.log("344444444444", isSubmission, hasSubmitted);
 
   return (
     <div className=" bg-gradient-to-br from-purple-50 to-pink-50 p-4 sm:p-8">
@@ -318,16 +352,32 @@ const ContestCard = () => {
                     ? "Register Free"
                     : "Pay & Register"}
                 </button>
-
                 <>
-                  <button
-                    onClick={() => setIsOpen(true)}
-                    className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-cyan-700 transition shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
-                  >
-                    <Send size={24} />
-                    Submit Task
-                  </button>
-                  <SubmitTaskModal setIsOpen={setIsOpen} isOpen={isOpen} />
+                  {isRegistered && (
+                    <>
+                      <button
+                        disabled={hasSubmitted}
+                        onClick={() => setIsOpen(true)}
+                        className={`flex-1 flex justify-center items-center py-4 rounded-xl font-bold text-lg transition
+                ${
+                  hasSubmitted
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:scale-105"
+                }`}
+                      >
+                        <Send size={24} />
+                        {hasSubmitted
+                          ? "Task Already Submitted"
+                          : "Submit Task"}
+                      </button>
+
+                      <SubmitTaskModal
+                        handleSubmission={handleSubmission}
+                        setIsOpen={setIsOpen}
+                        isOpen={isOpen}
+                      />
+                    </>
+                  )}
                 </>
               </>
             </div>

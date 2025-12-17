@@ -17,6 +17,8 @@ import AddContest from "../pages/Dashboard/ContestCreator/AddContest";
 import MyCreatedContests from "../pages/Dashboard/ContestCreator/MyCreatedContests";
 import SubmitedTasksperContest from "../pages/Dashboard/ContestCreator/SubmitedTasksperContest";
 import UpdateContests from "../pages/Dashboard/ContestCreator/UpdateContests";
+import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
+import ManageContests from "../pages/Dashboard/Admin/ManageContests";
 
 export const router = createBrowserRouter([
   {
@@ -112,6 +114,24 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <UpdateContests />
+          </PrivateRoute>
+        ),
+      },
+
+      // Admin Creator
+      {
+        path: "manage-users",
+        element: (
+          <PrivateRoute>
+            <ManageUsers />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "manage-contests",
+        element: (
+          <PrivateRoute>
+            <ManageContests />
           </PrivateRoute>
         ),
       },
