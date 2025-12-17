@@ -1,182 +1,152 @@
-import { Link, useLocation, useNavigate } from 'react-router'
-import { FcGoogle } from 'react-icons/fc'
-import useAuth from '../../hooks/useAuth'
-import { toast } from 'react-hot-toast'
-import { TbFidgetSpinner } from 'react-icons/tb'
+import { useForm } from "react-hook-form";
+import { Link, useLocation, useNavigate } from "react-router";
+import { TbUserUp } from "react-icons/tb";
+import axios from "axios";
+import SocialLogin from "../SocialLogin/SocialLogin";
+import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const SignUp = () => {
-  const { createUser, updateUserProfile, signInWithGoogle, loading } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
-  const from = location.state || '/'
+  const { registerUser, updateUserProfile } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const axiosSecure = useAxiosSecure();
 
-  // form submit handler
-  const handleSubmit = async event => {
-    event.preventDefault()
-    const form = event.target
-    const name = form.name.value
-    const email = form.email.value
-    const password = form.password.value
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-    try {
-      //2. User Registration
-      const result = await createUser(email, password)
+  const handleRegistration = (data) => {
+    const proFileImg = data.photo[0];
 
-      //3. Save username & profile photo
-      await updateUserProfile(
-        name,
-        'https://lh3.googleusercontent.com/a/ACg8ocKUMU3XIX-JSUB80Gj_bYIWfYudpibgdwZE1xqmAGxHASgdvCZZ=s96-c'
-      )
-      console.log(result)
+    registerUser(data.email, data.password)
+      .then((result) => {
+        const formData = new FormData();
+        formData.append("image", proFileImg);
 
-      navigate(from, { replace: true })
-      toast.success('Signup Successful')
-    } catch (err) {
-      console.log(err)
-      toast.error(err?.message)
-    }
-  }
+        const image_API_URL = `https://api.imgbb.com/1/upload?key=${
+          import.meta.env.VITE_image_host
+        }`;
 
-  // Handle Google Signin
-  const handleGoogleSignIn = async () => {
-    try {
-      //User Registration using google
-      await signInWithGoogle()
+        axios.post(image_API_URL, formData).then((res) => {
+          const photoURL = res.data.data.url;
 
-      navigate(from, { replace: true })
-      toast.success('Signup Successful')
-    } catch (err) {
-      console.log(err)
-      toast.error(err?.message)
-    }
-  }
+          const userInfo = {
+            displayName: data.name,
+            photoURL: photoURL,
+          };
+
+          const userRoleInfo = {
+            email: data.email,
+            displayName: data.name,
+            photoURL: photoURL,
+          };
+
+          axiosSecure.post("/users", userRoleInfo).then((res) => {
+            if (res.data.insertedId) {
+              console.log("user added to DB");
+            }
+          });
+
+          updateUserProfile(userInfo)
+            .then(() => {
+              navigate(location.state || "/");
+            })
+            .catch((err) => console.log(err));
+        });
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
-    <div className='flex justify-center items-center min-h-screen bg-white'>
-      <div className='flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900'>
-        <div className='mb-8 text-center'>
-          <h1 className='my-3 text-4xl font-bold'>Sign Up</h1>
-          <p className='text-sm text-gray-400'>Welcome to PlantNet</p>
-        </div>
-        <form
-          onSubmit={handleSubmit}
-          noValidate=''
-          action=''
-          className='space-y-6 ng-untouched ng-pristine ng-valid'
-        >
-          <div className='space-y-4'>
-            <div>
-              <label htmlFor='email' className='block mb-2 text-sm'>
-                Name
-              </label>
-              <input
-                type='text'
-                name='name'
-                id='name'
-                placeholder='Enter Your Name Here'
-                className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-lime-500 bg-gray-200 text-gray-900'
-                data-temp-mail-org='0'
-              />
-            </div>
-            {/* Image */}
-            <div>
-              <label
-                htmlFor='image'
-                className='block mb-2 text-sm font-medium text-gray-700'
-              >
-                Profile Image
-              </label>
-              <input
-                name='image'
-                type='file'
-                id='image'
-                accept='image/*'
-                className='block w-full text-sm text-gray-500
-      file:mr-4 file:py-2 file:px-4
-      file:rounded-md file:border-0
-      file:text-sm file:font-semibold
-      file:bg-lime-50 file:text-lime-700
-      hover:file:bg-lime-100
-      bg-gray-100 border border-dashed border-lime-300 rounded-md cursor-pointer
-      focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-lime-400
-      py-2'
-              />
-              <p className='mt-1 text-xs text-gray-400'>
-                PNG, JPG or JPEG (max 2MB)
-              </p>
-            </div>
-            <div>
-              <label htmlFor='email' className='block mb-2 text-sm'>
-                Email address
-              </label>
-              <input
-                type='email'
-                name='email'
-                id='email'
-                required
-                placeholder='Enter Your Email Here'
-                className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-lime-500 bg-gray-200 text-gray-900'
-                data-temp-mail-org='0'
-              />
-            </div>
-            <div>
-              <div className='flex justify-between'>
-                <label htmlFor='password' className='text-sm mb-2'>
-                  Password
-                </label>
-              </div>
-              <input
-                type='password'
-                name='password'
-                autoComplete='new-password'
-                id='password'
-                required
-                placeholder='*******'
-                className='w-full px-3 py-2 border rounded-md border-gray-300 focus:outline-lime-500 bg-gray-200 text-gray-900'
-              />
-            </div>
-          </div>
+    <div className="max-w-3xl text-left card bg-base-100 shrink-0 shadow-2xl">
+      <h1 className="text-3xl mb-4">Create an Account</h1>
+      <p className="mb-4">Register with ZapShift</p>
 
-          <div>
-            <button
-              type='submit'
-              className='bg-lime-500 w-full rounded-md py-3 text-white'
-            >
-              {loading ? (
-                <TbFidgetSpinner className='animate-spin m-auto' />
-              ) : (
-                'Continue'
-              )}
-            </button>
-          </div>
-        </form>
-        <div className='flex items-center pt-4 space-x-1'>
-          <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
-          <p className='px-3 text-sm dark:text-gray-400'>
-            Signup with social accounts
-          </p>
-          <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
-        </div>
-        <div
-          onClick={handleGoogleSignIn}
-          className='flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer'
-        >
-          <FcGoogle size={32} />
-
-          <p>Continue with Google</p>
-        </div>
-        <p className='px-6 text-sm text-center text-gray-400'>
-          Already have an account?{' '}
-          <Link
-            to='/login'
-            className='hover:underline hover:text-lime-500 text-gray-600'
+      <form onSubmit={handleSubmit(handleRegistration)}>
+        <fieldset className="fieldset">
+          <label
+            htmlFor="fileInput"
+            className="w-12 h-12 border-2 rounded-full cursor-pointer"
           >
-            Login
-          </Link>
-          .
-        </p>
-      </div>
-    </div>
-  )
-}
+            <TbUserUp className="text-5xl" />
+          </label>
 
-export default SignUp
+          <input
+            id="fileInput"
+            type="file"
+            accept="image/png, image/jpeg"
+            {...register("photo", { required: true })}
+            className="file-input file-input-xl hidden"
+          />
+          {errors.photo?.type === "required" && (
+            <p className="text-left text-red-600">photo is required</p>
+          )}
+
+          <label className="label">Name</label>
+          <input
+            type="text"
+            {...register("name", { required: true })}
+            className="input w-full"
+            placeholder="Name"
+          />
+          {errors.name?.type === "required" && (
+            <p className="text-left text-red-600">name is required</p>
+          )}
+
+          <label className="label">Email</label>
+          <input
+            type="email"
+            {...register("email", { required: true })}
+            className="input w-full"
+            placeholder="Email"
+          />
+          {errors.email?.type === "required" && (
+            <p className="text-left text-red-600">email is required</p>
+          )}
+
+          <label className="label">Password</label>
+          <input
+            type="password"
+            {...register("password", {
+              required: true,
+              minLength: 6,
+              pattern:
+                /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            })}
+            className="input w-full"
+            placeholder="Password is required"
+          />
+
+          {errors.password?.type === "minLength" && (
+            <p className="text-red-900">Password must be 6 characters</p>
+          )}
+          {errors.password?.type === "pattern" && (
+            <p className="text-red-900">
+              Password must include uppercase, lowercase, number & special
+              character
+            </p>
+          )}
+
+          <a className="link link-hover">Forgot password?</a>
+
+          <button className="btn btn-neutral mt-4">Register</button>
+        </fieldset>
+      </form>
+
+      <p>
+        Already have an account?{" "}
+        <Link state={location.state} className="underline" to={"/login"}>
+          Login
+        </Link>
+      </p>
+
+      <span className="text-center block">Or</span>
+      <SocialLogin />
+    </div>
+  );
+};
+
+export default SignUp;
