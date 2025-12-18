@@ -4,15 +4,61 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
+import axios from "axios";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import toast from "react-hot-toast";
+import { useParams } from "react-router";
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 const AddContestForm = () => {
   const [startDate, setStartDate] = useState(new Date());
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset } = useForm();
   const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
-  const handleAddContest = (data) => {
+  const { id } = useParams();
+  const isEditMode = !!id;
+  console.log(isEditMode, id);
+  const { data: contestData, isLoading } = useQuery({
+    queryKey: ["contest", id],
+    enabled: isEditMode,
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/contest/${id}`);
+      return res.data;
+    },
+  });
+  useEffect(() => {
+    if (isEditMode && contestData) {
+      reset({
+        contestName: contestData.contestName,
+        category: contestData.category,
+        description: contestData.description,
+        taskDetails: contestData.taskDetails,
+        prizeMoney: contestData.prizeMoney,
+        registrationFee: contestData.registrationFee,
+        deadline: contestData.deadline?.slice(0, 10), // for input type="date"
+        contestImage: contestData.contestImage,
+      });
+    }
+  }, [isEditMode, contestData, reset]);
+  const handleAddContest = async (data) => {
+    let photoURL = contestData.contestImage; // 👈 default old image
+
     const deadlineDate = startDate.toISOString();
 
+    if (data.bannerImage && data.bannerImage.length > 0) {
+      const formData = new FormData();
+      const contestImage = data.bannerImage[0];
+      formData.append("image", contestImage);
+      const image_API_URL = `https://api.imgbb.com/1/upload?key=${
+        import.meta.env.VITE_image_host
+      }`;
+      const res = await axios.post(image_API_URL, formData);
+      photoURL = res.data.data.url;
+    }
+
     const contestInfo = {
+      contestImage: photoURL,
       category: data.category,
       contestName: data.contestName,
       description: data.description,
@@ -21,9 +67,33 @@ const AddContestForm = () => {
       taskDetails: data.taskDetails,
       deadline: deadlineDate,
       userEmail: user.email,
+      creatorName: user.displayName,
     };
-    console.log(contestInfo);
+    if (isEditMode) {
+      axiosSecure
+        .patch(`/contest/${id}`, contestInfo)
+        .then((res) => {
+          if (res.data.acknowledged) {
+            toast.success(`${data.contestName} Contest Updated!`);
+            reset();
+          }
+        })
+        .catch((err) => console.log(err));
+    } else {
+      axiosSecure
+        .post("/contest", contestInfo)
+        .then((res) => {
+          if (res.data.insertedId) {
+            toast.success(`${data.contestName} Contest Addded!`);
+            reset();
+          }
+        })
+        .catch((err) => console.log(err));
+      console.log(contestInfo);
+    }
   };
+  console.log(contestData);
+
   return (
     <div className="w-full min-h-[calc(100vh-40px)] flex flex-col justify-center items-center text-gray-800 rounded-xl bg-gray-50">
       <form className="w-full p-5" onSubmit={handleSubmit(handleAddContest)}>
@@ -147,8 +217,7 @@ const AddContestForm = () => {
                       name="image"
                       id="image"
                       accept="image/*"
-                      required
-                      {...register("bannerImage", { required: true })}
+                      {...register("bannerImage", { required: !isEditMode })}
                     />
                     <div className="bg-lime-500 text-white border border-gray-300 rounded font-semibold cursor-pointer p-1 px-3 hover:bg-lime-500">
                       Upload
@@ -163,7 +232,7 @@ const AddContestForm = () => {
               type="submit"
               className="w-full cursor-pointer p-3 mt-5 text-center font-medium text-white transition duration-200 rounded shadow-md bg-lime-500 "
             >
-              Save & Continue
+              {isEditMode ? "Update Contest" : "Add Contest"}
             </button>
           </div>
         </div>

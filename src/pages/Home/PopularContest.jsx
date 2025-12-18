@@ -36,7 +36,7 @@ const PopularContest = () => {
             {/* Contest Image */}
             <div className="relative h-48 overflow-hidden">
               <img
-                src={contestItem.bannerImage}
+                src={contestItem.contestImage}
                 alt={contestItem.contestName}
                 className="w-full h-full object-cover"
               />

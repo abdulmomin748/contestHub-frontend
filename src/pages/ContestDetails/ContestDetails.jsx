@@ -61,7 +61,7 @@ const ContestCard = () => {
       const res = await axiosSecure.get(
         `/contest-is-registered?contestId=${id}&email=${user.email}`
       );
-      
+
       return res.data?.registered ?? false; // ✅ ALWAYS return boolean
     },
   });
@@ -130,7 +130,8 @@ const ContestCard = () => {
   const isExpired = time.isOver;
 
   const {
-    bannerImage,
+    creatorName,
+    contestImage,
     category,
     contestId,
     contestName,
@@ -140,7 +141,6 @@ const ContestCard = () => {
     participantsCount,
     prizeMoney,
     taskDetails,
-    winner,
     _id,
     registrationFee,
   } = contestItem;
@@ -177,7 +177,7 @@ const ContestCard = () => {
           {/* Banner Image */}
           <div className="relative h-80 overflow-hidden">
             <img
-              src={bannerImage}
+              src={contestImage}
               alt={contestName}
               className="w-full h-full object-cover"
             />
@@ -191,7 +191,7 @@ const ContestCard = () => {
               <h1 className="text-4xl sm:text-5xl font-extrabold mb-2">
                 {contestName}
               </h1>
-              <p className="text-purple-200">Organized by creatorName</p>
+              <p className="text-purple-200">Organized by {creatorName}</p>
             </div>
           </div>
 
@@ -221,7 +221,7 @@ const ContestCard = () => {
               <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 text-center">
                 <Users className="text-blue-600 mx-auto mb-2" size={28} />
                 <div className="text-2xl font-bold text-gray-800">
-                  {participantsCount}
+                  {!participantsCount  ? 0 : participantsCount}
                 </div>
                 <div className="text-sm text-gray-600">Participants</div>
               </div>

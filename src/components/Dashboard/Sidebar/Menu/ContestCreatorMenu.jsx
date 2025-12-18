@@ -14,7 +14,7 @@ const ContestCreatorMenu = () => {
         label="My Created Contexts"
         address="my-crtd-context"
       />
-      <MenuItem
+      {/* <MenuItem
         icon={MdOutlineManageHistory}
         label="Submitted Tasks"
         address="submiteted-tasks"
@@ -23,7 +23,7 @@ const ContestCreatorMenu = () => {
         icon={MdOutlineManageHistory}
         label="Update Contests"
         address="update-contests"
-      />
+      /> */}
     </>
   );
 };

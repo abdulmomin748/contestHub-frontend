@@ -102,7 +102,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "submiteted-tasks",
+        path: "submiteted-tasks/:id",
         element: (
           <PrivateRoute>
             <SubmitedTasksperContest />
@@ -110,10 +110,10 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "update-contests",
+        path: "update-contests/:id",
         element: (
           <PrivateRoute>
-            <UpdateContests />
+            <AddContest />
           </PrivateRoute>
         ),
       },
