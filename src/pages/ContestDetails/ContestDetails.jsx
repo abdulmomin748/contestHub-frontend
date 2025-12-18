@@ -61,7 +61,7 @@ const ContestCard = () => {
       const res = await axiosSecure.get(
         `/contest-is-registered?contestId=${id}&email=${user.email}`
       );
-
+      
       return res.data?.registered ?? false; // ✅ ALWAYS return boolean
     },
   });
