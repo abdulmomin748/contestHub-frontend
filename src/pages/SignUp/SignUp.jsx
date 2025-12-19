@@ -7,7 +7,7 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import SocialLogin from "../../components/Shared/SocialLogin/SocialLogin";
 
 const SignUp = () => {
-  const { registerUser, updateUserProfile } = useAuth();
+  const { createUser, updateUserProfile } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
@@ -20,8 +20,9 @@ const SignUp = () => {
 
   const handleRegistration = (data) => {
     const proFileImg = data.photo[0];
-
-    registerUser(data.email, data.password)
+    console.log(data);
+    
+    createUser(data.email, data.password)
       .then((result) => {
         const formData = new FormData();
         formData.append("image", proFileImg);

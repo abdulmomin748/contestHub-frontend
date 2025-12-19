@@ -36,13 +36,13 @@ const AddContestForm = () => {
         taskDetails: contestData.taskDetails,
         prizeMoney: contestData.prizeMoney,
         registrationFee: contestData.registrationFee,
-        deadline: contestData.deadline?.slice(0, 10), // for input type="date"
+        deadline: contestData.deadline?.slice(0, 10), 
         contestImage: contestData.contestImage,
       });
     }
   }, [isEditMode, contestData, reset]);
   const handleAddContest = async (data) => {
-    let photoURL = contestData.contestImage; // 👈 default old image
+    let photoURL = contestData.contestImage; 
 
     const deadlineDate = startDate.toISOString();
 

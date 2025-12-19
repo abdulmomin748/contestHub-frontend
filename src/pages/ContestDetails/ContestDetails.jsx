@@ -26,6 +26,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import useAuth from "../../hooks/useAuth";
 import BecomeSellerModal from "../../components/Modal/BecomeSellerModal";
 import SubmitTaskModal from "../../components/Modal/SubmitTaskModal";
+import toast from "react-hot-toast";
 const ContestCard = () => {
   let [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth();
@@ -69,7 +70,7 @@ const ContestCard = () => {
     const paymentRegisterInfo = {
       contestId: contestItem._id,
       registrationFee: contestItem.registrationFee,
-      userEmail: contestItem?.userEmail,
+      userEmail: user?.email,
       contestName: contestItem.contestName,
       participantsCount: contestItem.participantsCount,
       deadline: contestItem.deadline,
@@ -78,7 +79,6 @@ const ContestCard = () => {
       "/contest/payment-register",
       paymentRegisterInfo
     );
-    console.log(res.data.url, paymentRegisterInfo);
     window.location.assign(res.data.url);
     refetch();
   };
@@ -88,11 +88,10 @@ const ContestCard = () => {
       const res = await axiosSecure.post("/contest/free-register", {
         contestId: contestItem._id,
         contestName: contestItem.contestName,
-        userEmail: contestItem?.userEmail,
+        userEmail: user?.email,
         deadline: contestItem.deadline,
       });
       refetch();
-      console.log(res.data);
     } else {
       handlePaymentRegister();
     }
@@ -111,15 +110,13 @@ const ContestCard = () => {
       });
   }, [sessionId, id]);
 
-  console.log(isRegistered);
   const { data: isSubmission, isLoading: isCheckingSubmission } = useQuery({
     queryKey: ["Submission", id],
     enabled: !!id && !!user?.email,
     queryFn: async () => {
       const res = await axiosSecure.get(
-        `/contest-submission?contestId=${contestItem._id}&email=${user.email}`
+        `/contest-submission?contestId=${contestItem._id}&email=${user?.email}`
       );
-      console.log("122", res.data);
       return res.data;
     },
   });
@@ -144,30 +141,28 @@ const ContestCard = () => {
     _id,
     registrationFee,
   } = contestItem;
-  console.log(contestItem);
+  console.log("contestItem", contestItem);
 
   const handleSubmission = (data) => {
     const submissionInfo = {
       contestId: contestItem._id,
       participantName: user?.displayName,
-      participantEmail: contestItem?.userEmail,
+      participantEmail: user?.userEmail,
       contestName: contestItem.contestName,
       participantsCount: contestItem.participantsCount,
       deadline: contestItem.deadline,
       category: contestItem.category,
-      taskName: data.taskName,
+      task: data.taskName,
     };
-    console.log(submissionInfo, data);
     axiosSecure
       .post("/contest/submission", submissionInfo)
       .then((res) => {
-        console.log(res.data);
+        toast.success(`For ${contestName} Contest - task submitted!`);
         refetch();
       })
       .catch((err) => console.log(err.response.data));
   };
   const hasSubmitted = Boolean(isSubmission?.submissionTaskAlreadyExist);
-  console.log("344444444444", isSubmission, hasSubmitted);
 
   return (
     <div className=" bg-gradient-to-br from-purple-50 to-pink-50 p-4 sm:p-8">
@@ -221,7 +216,7 @@ const ContestCard = () => {
               <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 text-center">
                 <Users className="text-blue-600 mx-auto mb-2" size={28} />
                 <div className="text-2xl font-bold text-gray-800">
-                  {!participantsCount  ? 0 : participantsCount}
+                  {!participantsCount ? 0 : participantsCount}
                 </div>
                 <div className="text-sm text-gray-600">Participants</div>
               </div>

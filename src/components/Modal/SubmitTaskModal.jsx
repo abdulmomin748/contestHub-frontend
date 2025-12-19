@@ -39,7 +39,7 @@ const SubmitTaskModal = ({ setIsOpen, isOpen, handleSubmission }) => {
                 as="h3"
                 className="text-lg font-medium text-center leading-6 text-gray-900"
               >
-                Update User Info
+                Submit Task
               </DialogTitle>
               <div className="mt-2 w-full">
                 <form onSubmit={handleSubmit(handleSubmitModalInf)}>
@@ -64,7 +64,7 @@ const SubmitTaskModal = ({ setIsOpen, isOpen, handleSubmission }) => {
                         type="submit"
                         className="w-full cursor-pointer p-3 mt-5 text-center font-medium text-white transition duration-200 rounded shadow-md btn btn-primary "
                       >
-                        Update Plant
+                        Submit
                       </button>
                     </div>
                   </div>
