@@ -1,10 +1,44 @@
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { useState } from "react";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-const UpdateUserRoleModal = ({ isOpen, closeModal, role }) => {
-  const [updatedRole, setUpdatedRole] = useState(role);
-  const handleUpdateRole = () => {
-    alert(updatedRole);
+const UpdateUserRoleModal = ({ isOpen, closeModal, user }) => {
+  console.log(user);
+
+  const [selectedRole, setSelectedRole] = useState(user?.role || "user");
+  const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
+
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: async (newRole) => {
+      const { data } = await axiosSecure.patch(`/users/${user._id}/role`, {
+        role: newRole,
+      });
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data.modifiedCount > 0) {
+        toast.success(
+          `updated ${user.role} role to ${selectedRole} sucessfully`
+        );
+        queryClient.invalidateQueries({ queryKey: ["users"] });
+      }
+    },
+    onError: (err) => {
+      toast.error("Failed to update role.");
+      console.error(err);
+    },
+  });
+  const handleUpdateRole = async () => {
+    console.log(selectedRole);
+
+    try {
+      await mutateAsync(selectedRole);
+    } catch (error) {
+      // Errors are handled in the mutation's onError, but you can catch here too
+    }
   };
   return (
     <>
@@ -29,8 +63,8 @@ const UpdateUserRoleModal = ({ isOpen, closeModal, role }) => {
               <form>
                 <div>
                   <select
-                    value={updatedRole}
-                    onChange={(e) => setUpdatedRole(e.target.value)}
+                    value={selectedRole}
+                    onChange={(e) => setSelectedRole(e.target.value)}
                     className="w-full my-3 border border-gray-200 rounded-xl px-2 py-3"
                     name="role"
                     id=""

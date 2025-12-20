@@ -22,15 +22,15 @@ const UpdateUserProfile = ({ setIsOpen, isOpen }) => {
 
         const res = await axios.post(image_API_URL, formData);
         const photoURL = res.data.data.url;
-
+        console.log("profile updated with name photo");
         await updateUserProfile(data.name, photoURL);
       }
       // Case 2: user only updates name
       else {
+        console.log("profile updated with name only");
         await updateUserProfile(data.name);
       }
 
-      console.log("profile updated");
       setIsOpen(false);
     } catch (err) {
       console.error(err);
