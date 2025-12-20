@@ -9,7 +9,8 @@ import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/Shared/LoadingSpinner";
 
 const SignUp = () => {
-  const { createUser, updateUserProfile, loading, user } = useAuth();
+  const { createUser, updateUserProfile, loading, user, setLoading } =
+    useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
@@ -68,7 +69,10 @@ const SignUp = () => {
             .catch((err) => console.log(err));
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        toast.error(err?.message);
+        setLoading(false);
+      });
   };
 
   return (

@@ -6,7 +6,7 @@ import { FcGoogle } from "react-icons/fc";
 import toast from "react-hot-toast";
 
 const SocialLogin = () => {
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle, setLoading } = useAuth();
   const axiosSecure = useAxiosSecure();
   const location = useLocation();
   const navigate = useNavigate();
@@ -32,7 +32,10 @@ const SocialLogin = () => {
           })
           .catch((err) => console.log(err));
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
   };
 
   return (
