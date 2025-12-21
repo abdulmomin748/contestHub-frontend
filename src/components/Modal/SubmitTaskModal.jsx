@@ -48,14 +48,14 @@ const SubmitTaskModal = ({ setIsOpen, isOpen, handleSubmission }) => {
                       {/* Name */}
                       <div className="space-y-1 text-sm">
                         <label htmlFor="name" className="block text-gray-600">
-                          User Name
+                          Task Link
                         </label>
                         <input
                           className="w-full px-4 py-3 text-gray-800 border border-gray-300 focus:outline-amber-950-500 rounded-md bg-white"
                           name="Your Name"
                           id="name"
                           type="url"
-                          placeholder="Plant Name"
+                          placeholder="Task Link"
                           {...register("taskName", { required: true })}
                         />
                       </div>

@@ -1,7 +1,18 @@
 import React from "react";
-import SellerOrderDataRow from "../../../components/Dashboard/TableRows/SellerOrderDataRow";
+import ManageContestsRow from "../../../components/Dashboard/TableRows/ManageContestsRow";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
 
 const ManageContests = () => {
+  const axiosSecure = useAxiosSecure();
+  const { data: constests = [] } = useQuery({
+    queryKey: ["constests"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/manage-contests");
+      return res.data;
+    },
+  });
+  console.log(constests);
   return (
     <div className="container mx-auto px-4 sm:px-8">
       <div className="py-8">
@@ -14,13 +25,13 @@ const ManageContests = () => {
                     scope="col"
                     className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                   >
-                    Email
+                    Creator Name
                   </th>
                   <th
                     scope="col"
                     className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
                   >
-                    Role
+                    Contest Name
                   </th>
                   <th
                     scope="col"
@@ -28,7 +39,6 @@ const ManageContests = () => {
                   >
                     Status
                   </th>
-
                   <th
                     scope="col"
                     className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal"
@@ -38,7 +48,7 @@ const ManageContests = () => {
                 </tr>
               </thead>
               <tbody>
-                <SellerOrderDataRow />
+                <ManageContestsRow constests={constests} />
               </tbody>
             </table>
           </div>

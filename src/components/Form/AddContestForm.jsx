@@ -13,7 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 const AddContestForm = () => {
   const [startDate, setStartDate] = useState(new Date());
   const { register, handleSubmit, reset } = useForm();
-  const { user } = useAuth();
+  const { user, } = useAuth();
   const axiosSecure = useAxiosSecure();
 
   const { id } = useParams();
@@ -42,7 +42,7 @@ const AddContestForm = () => {
     }
   }, [isEditMode, contestData, reset]);
   const handleAddContest = async (data) => {
-    let photoURL = contestData.contestImage; 
+    let photoURL = contestData?.contestImage; 
 
     const deadlineDate = startDate.toISOString();
 

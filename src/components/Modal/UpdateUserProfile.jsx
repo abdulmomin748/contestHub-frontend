@@ -1,12 +1,12 @@
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import UpdatePlantForm from "../Form/UpdatePlantForm";
 import useAuth from "../../hooks/useAuth";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const UpdateUserProfile = ({ setIsOpen, isOpen }) => {
   const { register, handleSubmit } = useForm();
-  const { user, updateUserProfile } = useAuth();
+  const { user, updateUserProfile, setUser } = useAuth();
   console.log(user);
 
   const handleUserUpdate = async (data) => {
@@ -23,12 +23,28 @@ const UpdateUserProfile = ({ setIsOpen, isOpen }) => {
         const res = await axios.post(image_API_URL, formData);
         const photoURL = res.data.data.url;
         console.log("profile updated with name photo");
-        await updateUserProfile(data.name, photoURL);
+        const userInfo = {
+          displayName: data.name,
+          photoURL: photoURL,
+        };
+        updateUserProfile(userInfo)
+          .then(() => {
+            setUser({ ...user, ...userInfo });
+            toast.success("User Profile Updated successfully");
+          })
+          .catch((err) => console.log(err));
       }
       // Case 2: user only updates name
       else {
-        console.log("profile updated with name only");
-        await updateUserProfile(data.name);
+        const userInfo = {
+          displayName: data.name,
+        };
+        updateUserProfile(userInfo)
+          .then(() => {
+            setUser({ ...user, ...userInfo });
+            toast.success("User Profile Updated successfully");
+          })
+          .catch((err) => console.log(err));
       }
 
       setIsOpen(false);
@@ -71,15 +87,15 @@ const UpdateUserProfile = ({ setIsOpen, isOpen }) => {
                     {/* Name */}
                     <div className="space-y-1 text-sm">
                       <label htmlFor="name" className="block text-gray-600">
-                        User Name
+                        Name
                       </label>
                       <input
                         className="w-full px-4 py-3 text-gray-800 border border-gray-300 focus:outline-amber-950-500 rounded-md bg-white"
-                        name="Your Name"
+                        name="Name"
                         id="name"
                         type="text"
                         defaultValue={user.displayName}
-                        placeholder="Plant Name"
+                        placeholder="User Name"
                         {...register("name", { required: true })}
                       />
                     </div>
@@ -108,7 +124,7 @@ const UpdateUserProfile = ({ setIsOpen, isOpen }) => {
                       type="submit"
                       className="w-full cursor-pointer p-3 mt-5 text-center font-medium text-white transition duration-200 rounded shadow-md bg-lime-500 "
                     >
-                      Update Plant
+                      Update User Profile
                     </button>
                   </div>
                 </div>

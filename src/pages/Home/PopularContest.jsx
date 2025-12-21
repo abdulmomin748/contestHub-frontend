@@ -9,12 +9,11 @@ const PopularContest = () => {
   const { data: contests = [] } = useQuery({
     queryKey: ["contests"],
     queryFn: async () => {
-      const res = await axiosInstance("/contests");
+      const res = await axiosInstance("/contests-popular?status=approved");
       return res.data;
     },
   });
   console.log(contests);
-
   return (
     <>
       <div className="text-center py-20">
@@ -56,23 +55,29 @@ const PopularContest = () => {
               {/* Participants Count */}
               <div className="flex items-center gap-2 mb-3">
                 <div className="flex items-center gap-1 bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
-                  <Users size={16} />
+                  <Calendar size={14} />
+
                   <span className="font-semibold">
-                    {contestItem.deadline.toLocaleString()}
+                    Ends: {new Date(contestItem.deadline).toDateString()}
                   </span>
-                  <span className="text-sm">participants</span>
                 </div>
               </div>
-
+              <div className="flex items-center gap-1 bg-blue-50 text-blue-700 px-3 py-1 rounded-full mb-5">
+                <Users size={16} />
+                <span className="text-sm">
+                  participantsCount {contestItem?.participantsCount}
+                </span>
+              </div>
               {/* Description */}
               <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                {contestItem.description}
+                {contestItem.description.length > 30
+                  ? contestItem.description.slice(0, 30) + "..."
+                  : contestItem.description}
               </p>
 
               {/* Deadline */}
               <div className="flex items-center gap-1 text-gray-500 text-sm mb-4">
-                <Calendar size={14} />
-                <span>Ends: {contestItem.contestStatus}</span>
+                <span>{contestItem.contestStatus}</span>
               </div>
               <div className="">
                 <Link

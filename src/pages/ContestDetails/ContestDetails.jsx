@@ -30,6 +30,7 @@ import toast from "react-hot-toast";
 const ContestCard = () => {
   let [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth();
+  console.log(user);
 
   const axiosInstance = useAxios();
   const axiosSecure = useAxiosSecure();
@@ -141,13 +142,12 @@ const ContestCard = () => {
     _id,
     registrationFee,
   } = contestItem;
-  console.log("contestItem", contestItem);
 
   const handleSubmission = (data) => {
     const submissionInfo = {
       contestId: contestItem._id,
       participantName: user?.displayName,
-      participantEmail: user?.userEmail,
+      participantEmail: user?.email,
       contestName: contestItem.contestName,
       participantsCount: contestItem.participantsCount,
       deadline: contestItem.deadline,
@@ -157,12 +157,15 @@ const ContestCard = () => {
     axiosSecure
       .post("/contest/submission", submissionInfo)
       .then((res) => {
+        console.log("handleSubmission", submissionInfo);
+
         toast.success(`For ${contestName} Contest - task submitted!`);
         refetch();
       })
       .catch((err) => console.log(err.response.data));
   };
   const hasSubmitted = Boolean(isSubmission?.submissionTaskAlreadyExist);
+  console.log(hasSubmitted);
 
   return (
     <div className=" bg-gradient-to-br from-purple-50 to-pink-50 p-4 sm:p-8">
