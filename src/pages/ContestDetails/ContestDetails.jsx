@@ -52,6 +52,18 @@ const ContestCard = () => {
       return res.data;
     },
   });
+  useEffect(() => {
+    // Start the countdown and store the cleanup function
+    const stopCountdown = startDeadlineCountdown(
+      contestItem?.deadline,
+      (timeData) => {
+        setTime(timeData);
+      }
+    );
+
+    // Clean up the interval when the component is destroyed
+    return () => stopCountdown();
+  }, [contestItem?.deadline]);
   const {
     data: isRegistered,
     isLoading: isCheckingRegistered,
@@ -126,6 +138,7 @@ const ContestCard = () => {
   }
 
   const isExpired = time.isOver;
+  console.log(isExpired);
 
   const {
     creatorName,
@@ -147,6 +160,7 @@ const ContestCard = () => {
     const submissionInfo = {
       contestId: contestItem._id,
       participantName: user?.displayName,
+      participantImg: user?.photoURL,
       participantEmail: user?.email,
       contestName: contestItem.contestName,
       participantsCount: contestItem.participantsCount,

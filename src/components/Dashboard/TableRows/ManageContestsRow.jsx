@@ -39,7 +39,7 @@ const ManageContestsRow = ({ constests }) => {
       return res.data;
     },
     onSuccess: (data, variables) => {
-      if (data.deletedCount ) {
+      if (data.deletedCount) {
         queryClient.invalidateQueries({ queryKey: ["constests"] });
         toast.success(
           `Contest Status is ${variables.updateInfo.status} Deleted`
@@ -80,7 +80,7 @@ const ManageContestsRow = ({ constests }) => {
           <td className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal">
             {conItem.contestName}
           </td>
-          <td className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal">
+          <td className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-medium italic">
             <span
               className={
                 conItem.status === "approved"
@@ -97,23 +97,31 @@ const ManageContestsRow = ({ constests }) => {
           </td>
           <td className="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-left text-sm uppercase font-normal">
             <button
+              title="Confirm"
               onClick={() => handleConConfirm(conItem)}
               className="btn btn-square"
             >
               <GiConfirmed />
             </button>
             <button
+              title="Reject"
               onClick={() => handleConReject(conItem)}
               className="btn btn-square"
             >
               <MdOutlineCancel />
             </button>
-            <button
-              onClick={() => handleConDelete(conItem._id)}
-              className="btn btn-square"
-            >
-              <MdDeleteForever />
-            </button>
+            {
+              <button
+                title="Delete"
+                disabled={
+                  conItem.status !== "pending" && conItem.status !== "rejected"
+                }
+                onClick={() => handleConDelete(conItem._id)}
+                className="btn btn-square"
+              >
+                <MdDeleteForever />
+              </button>
+            }
           </td>
         </tr>
       ))}

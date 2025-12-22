@@ -1,4 +1,8 @@
 export function startDeadlineCountdown(deadline, callback) {
+  if (typeof callback !== "function") {
+    console.error("Countdown Error: The second argument must be a function.");
+    return () => {}; // Return a dummy cleanup function to prevent errors
+  }
   const endTime = new Date(deadline).getTime();
 
   const timer = setInterval(() => {

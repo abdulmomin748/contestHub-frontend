@@ -10,8 +10,7 @@ const AllContests = () => {
   const [activeTab, setActiveTab] = useState("All");
 
   const { data: contests = [], isLoading } = useQuery({
-    queryKey: ["all-contests", user?.email],
-    enabled: !!user?.email,
+    queryKey: ["all-contests"],
     queryFn: async () => {
       const res = await axiosSecure(`/all-contests?status=approved`);
       return res.data;

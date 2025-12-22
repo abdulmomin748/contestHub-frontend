@@ -5,6 +5,9 @@ import { Link, NavLink } from "react-router";
 import useAuth from "../../../hooks/useAuth";
 import avatarImg from "../../../assets/images/placeholder.jpg";
 import logo from "../../../assets/images/logo-flat.png";
+import { FaRegUserCircle } from "react-icons/fa";
+import { IoIosLogOut } from "react-icons/io";
+import { RxDashboard } from "react-icons/rx";
 const Navbar = () => {
   const { user, logOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
@@ -20,13 +23,16 @@ const Navbar = () => {
             </Link>
             <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box">
               <li>
-                <NavLink to={'/'}>Home</NavLink>
+                <NavLink to={"/"}>Home</NavLink>
               </li>
               <li>
-                <NavLink to={'all-contests'}>All Contests</NavLink>
+                <NavLink to={"all-contests"}>All Contests</NavLink>
               </li>
               <li>
-                <NavLink>Extra Section</NavLink>
+                <NavLink to={"support"}>Support</NavLink>
+              </li>
+              <li>
+                <NavLink to={"about-us"}>About Us</NavLink>
               </li>
             </ul>
             {/* Dropdown Menu */}
@@ -52,7 +58,7 @@ const Navbar = () => {
                 </div>
               </div>
               {isOpen && (
-                <div className="absolute rounded-xl shadow-md w-[40vw] md:w-[10vw] bg-white overflow-hidden right-0 top-12 text-sm">
+                <div className="absolute rounded-xl shadow-md w-[60vw] md:w-[20vw] bg-white overflow-hidden right-0 top-12 text-sm">
                   <div className="flex flex-col cursor-pointer">
                     <Link
                       to="/"
@@ -62,20 +68,30 @@ const Navbar = () => {
                     </Link>
 
                     {user ? (
-                      <>
+                      <div className="px-5 py-2">
+                        <p className=""></p>
+                        <Link
+                          to="/dashboard/profile"
+                          className="px-4  italic flex items-center py-3 hover:bg-neutral-100 transition font-semibold"
+                        >
+                          <FaRegUserCircle />
+                          {user.displayName}
+                        </Link>
                         <Link
                           to="/dashboard"
-                          className="px-4 py-3 hover:bg-neutral-100 transition font-semibold"
+                          className="px-4 flex items-center py-3 hover:bg-neutral-100 transition font-semibold"
                         >
+                          <RxDashboard />
                           Dashboard
                         </Link>
                         <div
                           onClick={logOut}
-                          className="px-4 py-3 hover:bg-neutral-100 transition font-semibold cursor-pointer"
+                          className="px-4 py-3 flex items-center hover:bg-neutral-100 transition font-semibold cursor-pointer"
                         >
+                          <IoIosLogOut />
                           Logout
                         </div>
-                      </>
+                      </div>
                     ) : (
                       <>
                         <Link

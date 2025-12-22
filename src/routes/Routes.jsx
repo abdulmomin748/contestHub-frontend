@@ -19,6 +19,8 @@ import SubmitedTasksperContest from "../pages/Dashboard/ContestCreator/SubmitedT
 import UpdateContests from "../pages/Dashboard/ContestCreator/UpdateContests";
 import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
 import ManageContests from "../pages/Dashboard/Admin/ManageContests";
+import Support from "../pages/Support/Support";
+import AboutUs from "../pages/AboutUs/AboutUs";
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +43,14 @@ export const router = createBrowserRouter([
             <ContestDetails />
           </PrivateRoute>
         ),
+      },
+      {
+        path: "/support",
+        element: <Support />,
+      },
+      {
+        path: "/about-us",
+        element: <AboutUs />,
       },
     ],
   },
