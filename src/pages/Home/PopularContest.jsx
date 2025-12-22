@@ -9,7 +9,9 @@ const PopularContest = () => {
   const { data: contests = [] } = useQuery({
     queryKey: ["contests"],
     queryFn: async () => {
-      const res = await axiosInstance("/contests-popular?status=approved");
+      const res = await axiosInstance(
+        "/contests-popular?status=approved&status=completed"
+      );
       return res.data;
     },
   });

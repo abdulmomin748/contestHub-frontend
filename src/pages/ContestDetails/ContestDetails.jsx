@@ -30,7 +30,6 @@ import toast from "react-hot-toast";
 const ContestCard = () => {
   let [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth();
-  console.log(user);
 
   const axiosInstance = useAxios();
   const axiosSecure = useAxiosSecure();
@@ -138,7 +137,6 @@ const ContestCard = () => {
   }
 
   const isExpired = time.isOver;
-  console.log(isExpired);
 
   const {
     creatorName,
@@ -179,7 +177,6 @@ const ContestCard = () => {
       .catch((err) => console.log(err.response.data));
   };
   const hasSubmitted = Boolean(isSubmission?.submissionTaskAlreadyExist);
-  console.log(hasSubmitted);
 
   return (
     <div className=" bg-gradient-to-br from-purple-50 to-pink-50 p-4 sm:p-8">
@@ -237,66 +234,58 @@ const ContestCard = () => {
                 </div>
                 <div className="text-sm text-gray-600">Participants</div>
               </div>
-
-              {/* <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 text-center">
-                d h m
-                <Calendar className="text-green-600 mx-auto mb-2" size={28} />
-                <div className="text-2xl font-bold text-gray-800">1111111</div>
-                <div className="text-sm text-gray-600">Days Left</div>
-              </div> */}
             </div>
 
             {/* Countdown Timer */}
-            {!time.isOver ? (
+            {contestItem?.status !== "completed" && (
               <>
-                <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-6 mb-8">
-                  <div className="flex items-center justify-center gap-2 text-white mb-4">
-                    <Clock size={24} />
-                    <span className="text-xl font-bold">
-                      Live Deadline Countdown
-                    </span>
+                {!time.isOver ? (
+                  <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-6 mb-8">
+                    <div className="flex items-center justify-center gap-2 text-white mb-4">
+                      <Clock size={24} />
+                      <span className="text-xl font-bold">
+                        Live Deadline Countdown
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-4 gap-4 text-center">
+                      <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
+                        <div className="text-4xl font-bold text-black">
+                          {time.days}
+                        </div>
+                        <div className="text-black text-sm">Days</div>
+                      </div>
+                      <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
+                        <div className="text-4xl font-bold text-black">
+                          {time.hours}
+                        </div>
+                        <div className="text-black text-sm">Hours</div>
+                      </div>
+                      <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
+                        <div className="text-4xl font-bold text-black">
+                          {time.minutes}
+                        </div>
+                        <div className="text-black text-sm">Minutes</div>
+                      </div>
+                      <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
+                        <div className="text-4xl font-bold text-black">
+                          {time.seconds}
+                        </div>
+                        <div className="text-black text-sm">Seconds</div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-4 gap-4 text-center">
-                    <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
-                      <div className="text-4xl font-bold text-black">
-                        {time.days}
-                      </div>
-                      <div className="text-black text-sm">Days</div>
+                ) : (
+                  <div className="bg-red-100 border-2 border-red-300 rounded-2xl p-6 mb-8 text-center">
+                    <div className="text-3xl font-bold text-red-700 mb-2">
+                      Contest Ended
                     </div>
-                    <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
-                      <div className="text-4xl font-bold text-black">
-                        {time.hours}
-                      </div>
-                      <div className="text-black text-sm">Hours</div>
-                    </div>
-                    <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
-                      <div className="text-4xl font-bold text-black">
-                        {time.minutes}
-                      </div>
-                      <div className="text-black text-sm">Minutes</div>
-                    </div>
-                    <div className="bg-white bg-opacity-20 rounded-lg p-4 backdrop-blur-sm">
-                      <div className="text-4xl font-bold text-black">
-                        {time.seconds}
-                      </div>
-                      <div className="text-black text-sm">Seconds</div>
-                    </div>
+                    <p className="text-red-600">
+                      This contest is now closed for submissions
+                    </p>
                   </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="bg-red-100 border-2 border-red-300 rounded-2xl p-6 mb-8 text-center">
-                  <div className="text-3xl font-bold text-red-700 mb-2">
-                    Contest Ended
-                  </div>
-                  <p className="text-red-600">
-                    This contest is now closed for submissions
-                  </p>
-                </div>
+                )}
               </>
             )}
-
             {/* Description */}
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">
@@ -317,67 +306,78 @@ const ContestCard = () => {
             </div>
 
             {/* Winner Section (Only shows after contest ends and winner is declared) */}
-            <div className="hidden bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-2xl p-6 mb-8">
-              <div className="flex items-center gap-3 mb-4">
-                <Award className="text-yellow-600" size={32} />
-                <h2 className="text-2xl font-bold text-gray-800">
-                  🏆 Contest Winner
-                </h2>
-              </div>
-              <div className="flex items-center gap-6">
-                <img
-                  src={"contest.photo"}
-                  alt={"contest.name"}
-                  className="w-24 h-24 rounded-full object-cover border-4 border-yellow-400 shadow-lg"
-                />
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-800">
-                    {"contest.name"}
-                  </h3>
-                  <p className="text-gray-600 mb-2">{"contest.title"}</p>
-                  <div className="flex items-center gap-2 text-yellow-600 font-bold text-xl">
-                    <Trophy size={24} />
-                    <span>Won ${"contest.prizeAmount"}</span>
+            {contestItem?.status === "completed" && contestItem?.winner && (
+              <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-2xl p-6 mb-8 animate-pulse-slow">
+                <div className="flex items-center gap-3 mb-4">
+                  <Award className="text-yellow-600" size={32} />
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    🏆 Contest Winner
+                  </h2>
+                </div>
+                <div className="flex items-center gap-6">
+                  <img
+                    src={contestItem.winner.participantImg}
+                    alt={contestItem.winner.participantName}
+                    className="w-24 h-24 rounded-full object-cover border-4 border-yellow-400 shadow-lg"
+                  />
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-800">
+                      {contestItem.winner.participantName}
+                    </h3>
+                    <p className="text-gray-600 mb-2">
+                      Congratulations for the outstanding performance!
+                    </p>
+                    <div className="flex items-center gap-2 text-yellow-600 font-bold text-xl">
+                      <Trophy size={24} />
+                      <span>Won ${contestItem.winner.prizeMoney}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <>
-                <button
-                  onClick={handleRegister}
-                  disabled={isExpired || isRegistered || isCheckingRegistered}
-                  className={`flex-1 py-4 rounded-xl font-bold text-lg transition
-                ${
-                  isExpired || isRegistered
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:scale-105"
-                }`}
-                >
-                  {isExpired
-                    ? "Contest Ended"
-                    : isRegistered
-                    ? "Already Registered"
-                    : Number(contestItem?.registrationFee) === 0
-                    ? "Register Free"
-                    : "Pay & Register"}
-                </button>
+              {contestItem?.status === "completed" ? (
+                // Show a "Finished" banner instead of buttons
+                <div className="flex-1 py-4 bg-gray-100 text-gray-500 text-center rounded-xl font-bold border-2 border-dashed border-gray-300">
+                  This contest has been completed and a winner has been
+                  Declared.
+                </div>
+              ) : (
                 <>
+                  <button
+                    onClick={handleRegister}
+                    disabled={isExpired || isRegistered || isCheckingRegistered}
+                    className={`flex-1 py-4 rounded-xl font-bold text-lg transition
+        ${
+          isExpired || isRegistered
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:scale-105"
+        }`}
+                  >
+                    {isExpired
+                      ? "Contest Ended"
+                      : isRegistered
+                      ? "Already Registered"
+                      : Number(contestItem?.registrationFee) === 0
+                      ? "Register Free"
+                      : "Pay & Register"}
+                  </button>
+
                   {isRegistered && (
                     <>
                       <button
                         disabled={hasSubmitted}
                         onClick={() => setIsOpen(true)}
                         className={`flex-1 flex justify-center items-center py-4 rounded-xl font-bold text-lg transition
-                ${
-                  hasSubmitted
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:scale-105"
-                }`}
+            ${
+              hasSubmitted
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:scale-105"
+            }`}
                       >
-                        <Send size={24} />
+                        <Send className="mr-2" size={24} />
                         {hasSubmitted
                           ? "Task Already Submitted"
                           : "Submit Task"}
@@ -391,19 +391,21 @@ const ContestCard = () => {
                     </>
                   )}
                 </>
-              </>
+              )}
             </div>
 
             {/* Info Box */}
 
-            {isRegistered && (
-              <div className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
-                <p className="text-blue-800 text-center">
-                  ✅ You're registered! Click "Submit Task" to provide your
-                  submission link and complete your entry.
-                </p>
-              </div>
-            )}
+            {contestItem?.status === "completed"
+              ? ""
+              : isRegistered && (
+                  <div className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
+                    <p className="text-blue-800 text-center">
+                      ✅ You're registered! Click "Submit Task" to provide your
+                      submission link and complete your entry.
+                    </p>
+                  </div>
+                )}
           </div>
         </div>
       </div>

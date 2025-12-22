@@ -12,7 +12,9 @@ const AllContests = () => {
   const { data: contests = [], isLoading } = useQuery({
     queryKey: ["all-contests"],
     queryFn: async () => {
-      const res = await axiosSecure(`/all-contests?status=approved`);
+      const res = await axiosSecure(
+        `/all-contests?status=approved&status=completed`
+      );
       return res.data;
     },
   });
