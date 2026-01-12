@@ -38,7 +38,7 @@ const AboutUs = () => {
                   className="rounded-2xl shadow-2xl relative z-10"
                 />
                 {/* Decorative element */}
-                <div className="absolute -bottom-6 -right-6 w-64 h-64 bg-blue-100 rounded-full -z-0 opacity-50"></div>
+                <div className="absolute -bottom-6 -right-6 w-64 h-64 bg-blue-100 rounded-full z-0 opacity-50"></div>
               </div>
             </div>
           </div>

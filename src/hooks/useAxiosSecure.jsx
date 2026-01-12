@@ -4,7 +4,7 @@ import axios from "axios";
 import useAuth from "./useAuth";
 
 const axiosInstance = axios.create({
-  baseURL: "https://contest-hub-backend-taupe.vercel.app",
+  baseURL: "http://localhost:3000",
   withCredentials: true,
 });
 

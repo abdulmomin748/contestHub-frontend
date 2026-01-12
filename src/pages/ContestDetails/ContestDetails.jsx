@@ -346,24 +346,28 @@ const ContestCard = () => {
                 </div>
               ) : (
                 <>
-                  <button
-                    onClick={handleRegister}
-                    disabled={isExpired || isRegistered || isCheckingRegistered}
-                    className={`flex-1 py-4 rounded-xl font-bold text-lg transition
+                  {
+                    user && <button
+                      onClick={handleRegister}
+                      disabled={
+                        isExpired || isRegistered || isCheckingRegistered
+                      }
+                      className={`flex-1 py-4 rounded-xl font-bold text-lg transition
         ${
           isExpired || isRegistered
             ? "bg-gray-400 cursor-not-allowed"
             : "bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:scale-105"
         }`}
-                  >
-                    {isExpired
-                      ? "Contest Ended"
-                      : isRegistered
-                      ? "Already Registered"
-                      : Number(contestItem?.registrationFee) === 0
-                      ? "Register Free"
-                      : "Pay & Register"}
-                  </button>
+                    >
+                      {isExpired
+                        ? "Contest Ended"
+                        : isRegistered
+                        ? "Already Registered"
+                        : Number(contestItem?.registrationFee) === 0
+                        ? "Register Free"
+                        : "Pay & Register"}
+                    </button>
+                  }
 
                   {isRegistered && (
                     <>

@@ -21,6 +21,9 @@ import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
 import ManageContests from "../pages/Dashboard/Admin/ManageContests";
 import Support from "../pages/Support/Support";
 import AboutUs from "../pages/AboutUs/AboutUs";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
+import CreatorRoute from "./CreatorRoute";
+import AdminRoute from "./AdminRoute";
 
 export const router = createBrowserRouter([
   {
@@ -38,11 +41,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/contest/:id",
-        element: (
-          <PrivateRoute>
-            <ContestDetails />
-          </PrivateRoute>
-        ),
+        element: <ContestDetails />,
       },
       {
         path: "/support",
@@ -51,6 +50,10 @@ export const router = createBrowserRouter([
       {
         path: "/about-us",
         element: <AboutUs />,
+      },
+      {
+        path: "/privacy-policy",
+        element: <PrivacyPolicy />,
       },
     ],
   },
@@ -102,33 +105,33 @@ export const router = createBrowserRouter([
       {
         path: "add-contest",
         element: (
-          <PrivateRoute>
+          <CreatorRoute>
             <AddContest />
-          </PrivateRoute>
+          </CreatorRoute>
         ),
       },
       {
         path: "my-crtd-context",
         element: (
-          <PrivateRoute>
+          <CreatorRoute>
             <MyCreatedContests />
-          </PrivateRoute>
+          </CreatorRoute>
         ),
       },
       {
         path: "submiteted-tasks/:id",
         element: (
-          <PrivateRoute>
+          <CreatorRoute>
             <SubmitedTasksperContest />
-          </PrivateRoute>
+          </CreatorRoute>
         ),
       },
       {
         path: "update-contests/:id",
         element: (
-          <PrivateRoute>
+          <CreatorRoute>
             <AddContest />
-          </PrivateRoute>
+          </CreatorRoute>
         ),
       },
 
@@ -136,17 +139,17 @@ export const router = createBrowserRouter([
       {
         path: "manage-users",
         element: (
-          <PrivateRoute>
+          <AdminRoute>
             <ManageUsers />
-          </PrivateRoute>
+          </AdminRoute>
         ),
       },
       {
         path: "manage-contests",
         element: (
-          <PrivateRoute>
+          <AdminRoute>
             <ManageContests />
-          </PrivateRoute>
+          </AdminRoute>
         ),
       },
     ],

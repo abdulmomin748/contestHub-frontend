@@ -31,7 +31,7 @@ const PopularContest = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-x-5 gap-y-15">
+      <div className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-3 gap-5 ml-5">
         {contests.map((contestItem) => (
           <div className=" bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 ">
             {/* Contest Image */}

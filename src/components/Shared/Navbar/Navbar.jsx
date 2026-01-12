@@ -8,113 +8,94 @@ import logo from "../../../assets/images/logo-flat.png";
 import { FaRegUserCircle } from "react-icons/fa";
 import { IoIosLogOut } from "react-icons/io";
 import { RxDashboard } from "react-icons/rx";
+
 const Navbar = () => {
   const { user, logOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  return (
-    <div className="fixed w-full bg-white z-10 shadow-sm">
-      <div className="py-4 ">
-        <Container>
-          <div className="flex flex-row  items-center justify-between gap-3 md:gap-0">
-            {/* Logo */}
-            <Link to="/">
-              <img src={logo} alt="logo" width="100" height="100" />
-            </Link>
-            <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box">
-              <li>
-                <NavLink to={"/"}>Home</NavLink>
-              </li>
-              <li>
-                <NavLink to={"all-contests"}>All Contests</NavLink>
-              </li>
-              <li>
-                <NavLink to={"support"}>Support</NavLink>
-              </li>
-              <li>
-                <NavLink to={"about-us"}>About Us</NavLink>
-              </li>
-            </ul>
-            {/* Dropdown Menu */}
-            <div className="relative">
-              <div className="flex flex-row items-center gap-3">
-                {/* Dropdown btn */}
-                <div
-                  onClick={() => setIsOpen(!isOpen)}
-                  className="p-4 md:py-1 md:px-2 border border-neutral-200 flex flex-row items-center gap-3 rounded-full cursor-pointer hover:shadow-md transition"
-                >
-                  <AiOutlineMenu />
-                  <div className="hidden md:block">
-                    {/* Avatar */}
-                    <img
-                      className="rounded-full"
-                      referrerPolicy="no-referrer"
-                      src={user && user.photoURL ? user.photoURL : avatarImg}
-                      alt="profile"
-                      height="30"
-                      width="30"
-                    />
-                  </div>
-                </div>
-              </div>
-              {isOpen && (
-                <div className="absolute rounded-xl shadow-md w-[60vw] md:w-[20vw] bg-white overflow-hidden right-0 top-12 text-sm">
-                  <div className="flex flex-col cursor-pointer">
-                    <Link
-                      to="/"
-                      className="block md:hidden px-4 py-3 hover:bg-neutral-100 transition font-semibold"
-                    >
-                      Home
-                    </Link>
+  const navLinks = (
+    <>
+      <li><NavLink to="/">Home</NavLink></li>
+      <li><NavLink to="/all-contests">All Contests</NavLink></li>
+      <li><NavLink to="/support">Support</NavLink></li>
+      <li><NavLink to="/about-us">About Us</NavLink></li>
+      <li><NavLink to="/privacy-policy">Privacy Policy</NavLink></li>
+    </>
+  );
 
-                    {user ? (
-                      <div className="px-5 py-2">
-                        <p className=""></p>
-                        <Link
-                          to="/dashboard/profile"
-                          className="px-4  italic flex items-center py-3 hover:bg-neutral-100 transition font-semibold"
-                        >
-                          <FaRegUserCircle />
-                          {user.displayName}
-                        </Link>
-                        <Link
-                          to="/dashboard"
-                          className="px-4 flex items-center py-3 hover:bg-neutral-100 transition font-semibold"
-                        >
-                          <RxDashboard />
-                          Dashboard
-                        </Link>
-                        <div
-                          onClick={logOut}
-                          className="px-4 py-3 flex items-center hover:bg-neutral-100 transition font-semibold cursor-pointer"
-                        >
-                          <IoIosLogOut />
-                          Logout
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <Link
-                          to="/login"
-                          className="px-4 py-3 hover:bg-neutral-100 transition font-semibold"
-                        >
-                          Login
-                        </Link>
-                        <Link
-                          to="/signup"
-                          className="px-4 py-3 hover:bg-neutral-100 transition font-semibold"
-                        >
-                          Sign Up
-                        </Link>
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
+  return (
+    <div className="fixed w-full bg-white z-50 shadow-sm">
+      <Container>
+        <div className="flex items-center justify-between py-4">
+
+          {/* Logo */}
+          <Link to="/">
+            <img src={logo} alt="logo" className="w-24" />
+          </Link>
+
+          {/* Desktop Menu */}
+          <ul className="hidden lg:flex menu menu-horizontal gap-2">
+            {navLinks}
+          </ul>
+
+          {/* Right Side */}
+          <div className="flex items-center gap-3">
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="lg:hidden p-2 border rounded-full"
+            >
+              <AiOutlineMenu size={20} />
+            </button>
+
+            {/* Avatar */}
+            <img
+              className="hidden lg:block w-8 h-8 rounded-full"
+              src={user?.photoURL || avatarImg}
+              alt="profile"
+            />
           </div>
-        </Container>
-      </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {isOpen && (
+          <div className="lg:hidden bg-white shadow-md rounded-lg p-4">
+            <ul
+              onClick={() => setIsOpen(false)}
+              className="menu menu-vertical gap-2"
+            >
+              {navLinks}
+
+              <hr />
+
+              {user ? (
+                <>
+                  <li>
+                    <Link to="/dashboard/profile">
+                      <FaRegUserCircle /> {user.displayName}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/dashboard">
+                      <RxDashboard /> Dashboard
+                    </Link>
+                  </li>
+                  <li onClick={logOut}>
+                    <span className="flex items-center gap-2">
+                      <IoIosLogOut /> Logout
+                    </span>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li><Link to="/login">Login</Link></li>
+                  <li><Link to="/signup">Sign Up</Link></li>
+                </>
+              )}
+            </ul>
+          </div>
+        )}
+      </Container>
     </div>
   );
 };

@@ -13,8 +13,11 @@ import MenuItem from "./Menu/MenuItem";
 import AdminMenu from "./Menu/AdminMenu";
 import UserMenu from "./Menu/UserMenu";
 import ContestCreatorMenu from "./Menu/ContestCreatorMenu";
+import useRole from "../../../hooks/useRole";
 
 const Sidebar = () => {
+  const { role } = useRole();
+
   const { logOut } = useAuth();
   const [isActive, setActive] = useState(false);
 
@@ -71,9 +74,9 @@ const Sidebar = () => {
                 address="/dashboard"
               /> */}
               {/* Role-Based Menu */}
-              <UserMenu />
-              <ContestCreatorMenu />
-              <AdminMenu />
+              {role === "user" && <UserMenu />}
+              {role === "creator" && <ContestCreatorMenu />}
+              {role === "admin" && <AdminMenu />}
             </nav>
           </div>
 
